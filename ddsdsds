@@ -1,0 +1,1803 @@
+shared.LoaderTitle = "Loading Script May take few seconds..."
+
+shared.LoaderKeyFrames = {
+    [1] = {5,  30},
+    [2] = {5,  48},
+    [3] = {3,  67},
+    [4] = {6, 100}
+}
+
+local Steps = {
+    [1] = "Trusted by 10,000+ players daily!",
+    [2] = " Use Optimize for smooth performance",
+    [3] = "Premium MM2 experience",
+    [4] = "Launching Zuri Hub..."
+}
+
+-- Neon Theme Colors
+local Colors = {
+    Main = Color3.fromRGB(10, 8, 18),           -- Dark background
+    Glass = Color3.fromRGB(25, 20, 45),         -- Glass overlay
+    Accent = Color3.fromRGB(180, 0, 255),       -- Main Purple (Neon)
+    Text = Color3.fromRGB(255, 255, 255),
+    SubText = Color3.fromRGB(200, 180, 255),    -- Light Purple
+    ProgressBG = Color3.fromRGB(35, 30, 55),
+    ProgressFill = Color3.fromRGB(180, 0, 255), -- Purple Progress Bar
+    Glow = Color3.fromRGB(200, 100, 255)        -- Glow effect
+}
+
+local TweenService = game:GetService("TweenService")
+
+local function Tween(obj, duration, properties)
+    TweenService:Create(obj, TweenInfo.new(duration, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), properties):Play()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "NeonLoader"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = game:GetService("CoreGui")
+
+local Main = Instance.new("Frame")
+Main.Size = UDim2.new(0, 0, 0, 0)
+Main.Position = UDim2.new(0.5, 0, 0.5, 0)
+Main.AnchorPoint = Vector2.new(0.5, 0.5)
+Main.BackgroundColor3 = Colors.Main
+Main.BorderSizePixel = 0
+Main.ClipsDescendants = true
+Main.Parent = ScreenGui
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.Parent = Main
+
+local BorderStroke = Instance.new("UIStroke")
+BorderStroke.Color = Colors.Accent
+BorderStroke.Thickness = 2
+BorderStroke.Transparency = 0.3
+BorderStroke.Parent = Main
+
+local GlassOverlay = Instance.new("Frame")
+GlassOverlay.Size = UDim2.new(1,0,1,0)
+GlassOverlay.BackgroundColor3 = Colors.Glass
+GlassOverlay.BackgroundTransparency = 0.75
+GlassOverlay.BorderSizePixel = 0
+GlassOverlay.Parent = Main
+Instance.new("UICorner", GlassOverlay).CornerRadius = UDim.new(0, 12)
+
+local UserIcon = Instance.new("ImageLabel")
+UserIcon.Size = UDim2.new(0, 50, 0, 50)
+UserIcon.Position = UDim2.new(0, 15, 0, 12)
+UserIcon.BackgroundTransparency = 1
+UserIcon.Image = "rbxassetid://121142530322197"
+Instance.new("UICorner", UserIcon).CornerRadius = UDim.new(1, 0)
+UserIcon.Parent = Main
+
+local Username = Instance.new("TextLabel")
+Username.Size = UDim2.new(0, 240, 0, 30)
+Username.Position = UDim2.new(0, 75, 0, 23)
+Username.BackgroundTransparency = 1
+Username.Text = "Zuri Hub"
+Username.TextColor3 = Colors.Text
+Username.Font = Enum.Font.GothamBold
+Username.TextSize = 14
+Username.TextXAlignment = Enum.TextXAlignment.Left
+Username.Parent = Main
+
+local ProgressBG = Instance.new("Frame")
+ProgressBG.Size = UDim2.new(0.85, 0, 0, 10)
+ProgressBG.Position = UDim2.new(0.075, 0, 0.68, 0)
+ProgressBG.BackgroundColor3 = Colors.ProgressBG
+ProgressBG.BorderSizePixel = 0
+ProgressBG.Parent = Main
+Instance.new("UICorner", ProgressBG).CornerRadius = UDim.new(1, 0)
+
+local ProgressBar = Instance.new("Frame")
+ProgressBar.Size = UDim2.new(0, 0, 1, 0)
+ProgressBar.BackgroundColor3 = Colors.ProgressFill
+ProgressBar.BorderSizePixel = 0
+ProgressBar.Parent = ProgressBG
+local BarCorner = Instance.new("UICorner")
+BarCorner.CornerRadius = UDim.new(1, 0)
+BarCorner.Parent = ProgressBar
+
+local PercentText = Instance.new("TextLabel")
+PercentText.Size = UDim2.new(1, 0, 0, 25)
+PercentText.Position = UDim2.new(0, 0, 0.78, 0)
+PercentText.BackgroundTransparency = 1
+PercentText.Text = "0%"
+PercentText.TextColor3 = Colors.Text
+PercentText.Font = Enum.Font.GothamBold
+PercentText.TextSize = 16
+PercentText.Parent = Main
+
+local StatusText = Instance.new("TextLabel")
+StatusText.Size = UDim2.new(0.9, 0, 0, 20)
+StatusText.Position = UDim2.new(0.05, 0, 0.52, 0)
+StatusText.BackgroundTransparency = 1
+StatusText.Text = "Starting..."
+StatusText.TextColor3 = Colors.SubText
+StatusText.Font = Enum.Font.Gotham
+StatusText.TextSize = 13
+StatusText.TextXAlignment = Enum.TextXAlignment.Center
+StatusText.Parent = Main
+
+task.spawn(function()
+    while Main and Main.Parent do
+        for t = 0, 1, 0.05 do
+            if not Main.Parent then break end
+            local alpha = 0.3 + math.sin(t * math.pi) * 0.2
+            BorderStroke.Transparency = alpha
+            task.wait(0.03)
+        end
+        task.wait(0.1)
+    end
+end)
+
+Tween(Main, 0.45, {Size = UDim2.new(0, 346, 0, 121)})
+task.wait(0.3)
+Tween(ProgressBG, 0.5, {BackgroundTransparency = 0})
+Tween(ProgressBar, 0.5, {BackgroundTransparency = 0})
+
+for step, data in ipairs(shared.LoaderKeyFrames) do
+    task.wait(data[1])
+    local percent = data[2]
+    Tween(ProgressBar, 0.4, {Size = UDim2.new(percent / 100, 0, 1, 0)})
+    PercentText.Text = percent .. "%"
+    StatusText.Text = Steps[step] or "Loading..."
+    StatusText.TextColor3 = Colors.Accent
+    task.wait(0.15)
+    StatusText.TextColor3 = Colors.SubText
+end
+
+task.wait(0.6)
+Tween(PercentText, 0.4, {TextTransparency = 1})
+Tween(StatusText, 0.4, {TextTransparency = 1})
+Tween(ProgressBG, 0.5, {BackgroundTransparency = 1})
+Tween(ProgressBar, 0.5, {BackgroundTransparency = 1})
+task.wait(0.5)
+Tween(Main, 0.4, {Size = UDim2.new(0, 0, 0, 0)})
+task.wait(0.45)
+ScreenGui:Destroy()
+print("Loading Finished!")
+
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+local Players = game:GetService("Players")
+local Plr = Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local VirtualUser = game:GetService("VirtualUser")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TextChatService = game:GetService("TextChatService") -- Removed cloneref
+local Camera = workspace.CurrentCamera
+
+local Character = Plr.Character or Plr.CharacterAdded:Wait()
+local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+local Humanoid = Character:WaitForChild("Humanoid")
+
+local CoinCollected = ReplicatedStorage.Remotes.Gameplay:WaitForChild("CoinCollected")
+local RoundStart = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Gameplay"):WaitForChild("RoundStart")
+local RoundEndFade = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Gameplay"):WaitForChild("RoundEndFade")
+
+local ToFarm = "Egg"
+local start_position = CFrame.new(0, 10, 0)
+local farming = false
+local bag_full = false
+local total_collected = 0
+local auto_farm_speed = 15
+local autofarm_enabled = false
+local inRound = false
+local isInitializing = true
+
+-- Combat Variables
+local shootOffset = 2.8
+local offsetToPingMult = 1.0
+local autoShooting = false
+local loopThrow = false
+local autoGetDroppedGun = false
+local aimbotEnabled = false
+
+-- Player Toggles
+local noclipEnabled = false
+local invisibleEnabled = false
+local antiFlingEnabled = false
+local antiAfkEnabled = true
+
+-- FOV variable
+local fovValue = 70
+Camera.FieldOfView = fovValue
+
+-- Config Save/Load (disabled clipboard usage)
+local Config = {}
+
+-- Button lock states
+local shootButtonLocked = false
+local knifeButtonLocked = false
+local getGunButtonLocked = false
+
+-- Transparent button style toggle
+local transparentButtons = false
+
+-- Store active button references for style updates
+local activeButtons = {
+    shoot = { borderFrame = nil, button = nil, borderGradient = nil, btnGradient = nil, stroke = nil },
+    knife = { borderFrame = nil, button = nil, borderGradient = nil, btnGradient = nil, stroke = nil },
+    getGun = { borderFrame = nil, button = nil, borderGradient = nil, btnGradient = nil, stroke = nil }
+}
+
+-- ==================== TRANSPARENT BUTTON STYLE ====================
+local function applyTransparentStyle(btnData)
+    if not btnData.borderFrame or not btnData.button then return end
+    if transparentButtons then
+        btnData.borderFrame.BackgroundColor3 = Color3.fromHex("#7a1fa2")
+        btnData.borderFrame.BackgroundTransparency = 0.7
+        btnData.button.BackgroundColor3 = Color3.fromHex("#2d0047")
+        btnData.button.BackgroundTransparency = 0.6
+        if btnData.borderGradient then
+            btnData.borderGradient.Transparency = NumberSequence.new(0.3)
+        end
+        if btnData.btnGradient then
+            btnData.btnGradient.Transparency = NumberSequence.new(0.4)
+        end
+        if btnData.stroke then
+            btnData.stroke.Transparency = 0.7
+        end
+    else
+        btnData.borderFrame.BackgroundColor3 = Color3.fromHex("#7a1fa2")
+        btnData.borderFrame.BackgroundTransparency = 0
+        btnData.button.BackgroundColor3 = Color3.fromHex("#2d0047")
+        btnData.button.BackgroundTransparency = 0
+        if btnData.borderGradient then
+            btnData.borderGradient.Transparency = NumberSequence.new(0)
+        end
+        if btnData.btnGradient then
+            btnData.btnGradient.Transparency = NumberSequence.new(0)
+        end
+        if btnData.stroke then
+            btnData.stroke.Transparency = 0
+        end
+    end
+end
+
+local function updateAllButtonsStyle()
+    for _, btn in pairs(activeButtons) do
+        applyTransparentStyle(btn)
+    end
+end
+
+-- ==================== TELEPORT TO PLAYER ====================
+local function teleportToPlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then
+        WindUI:Notify({Title = "Error", Content = "Player not found or not in game!", Duration = 2})
+        return
+    end
+    local targetHRP = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not targetHRP then return end
+    local tween = TweenService:Create(HumanoidRootPart, TweenInfo.new(0.5, Enum.EasingStyle.Linear), {CFrame = targetHRP.CFrame * CFrame.new(0, 0, 2)})
+    tween:Play()
+    WindUI:Notify({Title = "Teleported", Content = "You moved to " .. targetPlayer.Name, Duration = 2})
+end
+
+-- ==================== FUNCTIONS ====================
+local function get_nearest_coin()
+    local closest_coin, min_distance = nil, math.huge
+    for _, model in pairs(workspace:GetChildren()) do
+        if model:FindFirstChild("CoinContainer") then
+            for _, coin in pairs(model.CoinContainer:GetChildren()) do
+                if coin:GetAttribute("CoinID") == ToFarm and coin:FindFirstChild("TouchInterest") then
+                    local distance = (HumanoidRootPart.Position - coin.Position).Magnitude
+                    if distance < min_distance then
+                        closest_coin = coin
+                        min_distance = distance
+                    end
+                end
+            end
+        end
+    end
+    return closest_coin, min_distance
+end
+
+local function tween_to(position, duration)
+    local tween = TweenService:Create(HumanoidRootPart, TweenInfo.new(duration, Enum.EasingStyle.Linear), { CFrame = position })
+    tween:Play()
+    return tween
+end
+
+local function start_farming_loop()
+    spawn(function()
+        while true do
+            if farming and not bag_full and Character and HumanoidRootPart then
+                local coin, distance = get_nearest_coin()
+                if coin then
+                    local targetCFrame = coin.CFrame
+                    local tween = tween_to(targetCFrame, distance / auto_farm_speed)
+                    repeat task.wait() until not coin:FindFirstChild("TouchInterest") or not farming
+                    tween:Cancel()
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end
+
+start_farming_loop()
+
+Plr.CharacterAdded:Connect(function(newChar)
+    Character = newChar
+    HumanoidRootPart = newChar:WaitForChild("HumanoidRootPart")
+    Humanoid = newChar:WaitForChild("Humanoid")
+    farming = false
+    if noclipEnabled then updateNoClip(true) end
+    if invisibleEnabled then updateInvisible(true) end
+    if antiFlingEnabled then startAntiFling(true) end
+end)
+
+CoinCollected.OnClientEvent:Connect(function(coin_type, current, max)
+    if coin_type == ToFarm then
+        total_collected += 1
+        if current == max then
+            bag_full = true
+            farming = false
+            if inRound then
+                tween_to(start_position, 2).Completed:Wait()
+            end
+            if Character:FindFirstChild("Humanoid") then
+                Character.Humanoid.Health = 0
+            end
+            task.wait(6)
+            bag_full = false
+        end
+    end
+end)
+
+RoundStart.OnClientEvent:Connect(function()
+    inRound = true
+    if autofarm_enabled then farming = true end
+end)
+
+RoundEndFade.OnClientEvent:Connect(function()
+    inRound = false
+    farming = false
+end)
+
+local function findMurderer()
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr.Backpack:FindFirstChild("Knife") or (plr.Character and plr.Character:FindFirstChild("Knife")) then
+            return plr
+        end
+    end
+    return nil
+end
+
+local function findSheriff()
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr.Backpack:FindFirstChild("Gun") or (plr.Character and plr.Character:FindFirstChild("Gun")) then
+            return plr
+        end
+    end
+    return nil
+end
+
+local function findNearestPlayer()
+    local shortest = math.huge
+    local nearest = nil
+    local myRoot = Plr.Character and Plr.Character:FindFirstChild("HumanoidRootPart")
+    if not myRoot then return nil end
+
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= Plr and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+            local dist = (myRoot.Position - plr.Character.HumanoidRootPart.Position).Magnitude
+            if dist < shortest then
+                shortest = dist
+                nearest = plr
+            end
+        end
+    end
+    return nearest
+end
+
+local function getPredictedPosition(target)
+    local char = target.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return Vector3.new() end
+
+    if aimbotEnabled and char:FindFirstChild("Head") then
+        return char.Head.Position
+    end
+
+    local hrp = char.HumanoidRootPart
+    local hum = char:FindFirstChild("Humanoid")
+    local vel = hrp.AssemblyLinearVelocity
+    local moveDir = hum and hum.MoveDirection or Vector3.new()
+
+    local predicted = hrp.Position + (vel * Vector3.new(0.75, 0.5, 0.75)) * (shootOffset / 15) + moveDir * shootOffset
+    predicted = predicted * (((Plr:GetNetworkPing() * 1000) * ((offsetToPingMult - 1) * 0.01)) + 1)
+    return predicted
+end
+
+local function throwKnifeAt(target)
+    local knife = Plr.Character:FindFirstChild("Knife")
+    if not knife and Plr.Backpack:FindFirstChild("Knife") then
+        Plr.Character.Humanoid:EquipTool(Plr.Backpack.Knife)
+        task.wait(0.2)
+        knife = Plr.Character:FindFirstChild("Knife")
+    end
+    if not knife then return false end
+
+    local pos = getPredictedPosition(target)
+    knife.Events.KnifeThrown:FireServer(
+        CFrame.new(Plr.Character.RightHand.Position),
+        CFrame.new(pos)
+    )
+    return true
+end
+
+--FLING
+local function miniFling(playerToFling)
+    	local a=game.Players.LocalPlayer;local b=a:GetMouse()local c={playerToFling}local d=game:GetService("Players")local e=d.LocalPlayer;local f=false;local g=function(h)local i=e.Character;local j=i and i:FindFirstChildOfClass("Humanoid")local k=j and j.RootPart;local l=h.Character;local m;local n;local o;local p;local q;if l:FindFirstChildOfClass("Humanoid")then m=l:FindFirstChildOfClass("Humanoid")end;if m and m.RootPart then n=m.RootPart end;if l:FindFirstChild("Head")then o=l.Head end;if l:FindFirstChildOfClass("Accessory")then p=l:FindFirstChildOfClass("Accessory")end;if p and p:FindFirstChild("Handle")then q=p.Handle end;if i and j and k then if k.Velocity.Magnitude<50 then getgenv().OldPos=k.CFrame end;if m and m.Sit and not f then end;if o then if o.Velocity.Magnitude>500 then fu.dialog("Player flung","Player is already flung. Fling again?",{"Fling again","No"})if fu.waitfordialog()=="No"then return fu.closedialog()end;fu.closedialog()end elseif not o and q then if q.Velocity.Magnitude>500 then fu.dialog("Player flung","Player is already flung. Fling again?",{"Fling again","No"})if fu.waitfordialog()=="No"then return fu.closedialog()end;fu.closedialog()end end;if o then workspace.CurrentCamera.CameraSubject=o elseif not o and q then workspace.CurrentCamera.CameraSubject=q elseif m and n then workspace.CurrentCamera.CameraSubject=m end;if not l:FindFirstChildWhichIsA("BasePart")then return end;local r=function(s,t,u)k.CFrame=CFrame.new(s.Position)*t*u;i:SetPrimaryPartCFrame(CFrame.new(s.Position)*t*u)k.Velocity=Vector3.new(9e7,9e7*10,9e7)k.RotVelocity=Vector3.new(9e8,9e8,9e8)end;local v=function(s)local w=2;local x=tick()local y=0;repeat if k and m then if s.Velocity.Magnitude<50 then y=y+100;r(s,CFrame.new(0,1.5,0)+m.MoveDirection*s.Velocity.Magnitude/1.25,CFrame.Angles(math.rad(y),0,0))task.wait()r(s,CFrame.new(0,-1.5,0)+m.MoveDirection*s.Velocity.Magnitude/1.25,CFrame.Angles(math.rad(y),0,0))task.wait()r(s,CFrame.new(2.25,1.5,-2.25)+m.MoveDirection*s.Velocity.Magnitude/1.25,CFrame.Angles(math.rad(y),0,0))task.wait()r(s,CFrame.new(-2.25,-1.5,2.25)+m.MoveDirection*s.Velocity.Magnitude/1.25,CFrame.Angles(math.rad(y),0,0))task.wait()r(s,CFrame.new(0,1.5,0)+m.MoveDirection,CFrame.Angles(math.rad(y),0,0))task.wait()r(s,CFrame.new(0,-1.5,0)+m.MoveDirection,CFrame.Angles(math.rad(y),0,0))task.wait()else r(s,CFrame.new(0,1.5,m.WalkSpeed),CFrame.Angles(math.rad(90),0,0))task.wait()r(s,CFrame.new(0,-1.5,-m.WalkSpeed),CFrame.Angles(0,0,0))task.wait()r(s,CFrame.new(0,1.5,m.WalkSpeed),CFrame.Angles(math.rad(90),0,0))task.wait()r(s,CFrame.new(0,1.5,n.Velocity.Magnitude/1.25),CFrame.Angles(math.rad(90),0,0))task.wait()r(s,CFrame.new(0,-1.5,-n.Velocity.Magnitude/1.25),CFrame.Angles(0,0,0))task.wait()r(s,CFrame.new(0,1.5,n.Velocity.Magnitude/1.25),CFrame.Angles(math.rad(90),0,0))task.wait()r(s,CFrame.new(0,-1.5,0),CFrame.Angles(math.rad(90),0,0))task.wait()r(s,CFrame.new(0,-1.5,0),CFrame.Angles(0,0,0))task.wait()r(s,CFrame.new(0,-1.5,0),CFrame.Angles(math.rad(-90),0,0))task.wait()r(s,CFrame.new(0,-1.5,0),CFrame.Angles(0,0,0))task.wait()end else break end until s.Velocity.Magnitude>500 or s.Parent~=h.Character or h.Parent~=d or h.Character~=l or m.Sit or j.Health<=0 or tick()>x+w end;workspace.FallenPartsDestroyHeight=0/0;local z=Instance.new("BodyVelocity")z.Name="EpixVel"z.Parent=k;z.Velocity=Vector3.new(9e8,9e8,9e8)z.MaxForce=Vector3.new(1/0,1/0,1/0)j:SetStateEnabled(Enum.HumanoidStateType.Seated,false)if n and o then if(n.CFrame.p-o.CFrame.p).Magnitude>5 then v(o)else v(n)end elseif n and not o then v(n)elseif not n and o then v(o)elseif not n and not o and p and q then v(q)else fu.notification("Can't find a proper part of target player to fling.")end;z:Destroy()j:SetStateEnabled(Enum.HumanoidStateType.Seated,true)workspace.CurrentCamera.CameraSubject=j;repeat k.CFrame=getgenv().OldPos*CFrame.new(0,.5,0)i:SetPrimaryPartCFrame(getgenv().OldPos*CFrame.new(0,.5,0))j:ChangeState("GettingUp")table.foreach(i:GetChildren(),function(A,B)if B:IsA("BasePart")then B.Velocity,B.RotVelocity=Vector3.new(),Vector3.new()end end)task.wait()until(k.Position-getgenv().OldPos.p).Magnitude<25;workspace.FallenPartsDestroyHeight=getgenv().FPDH else fu.notification("No valid character of said target player. May have died.")end end;g(c[1])
+end
+
+-- Auto Get Gun
+local function autoGetGun()
+    local map = nil
+    for _, v in ipairs(workspace:GetChildren()) do
+        if v:FindFirstChild("CoinContainer") then
+            map = v
+            break
+        end
+    end
+    if not map then return end
+
+    local gunDrop = map:FindFirstChild("GunDrop")
+    if not gunDrop then return end
+
+    local previousCFrame = HumanoidRootPart.CFrame
+    HumanoidRootPart.CFrame = gunDrop.CFrame + Vector3.new(0, 5, 0)
+
+    local success = Plr.Backpack.ChildAdded:Wait(2)
+    if success then
+        task.wait(0.3)
+        HumanoidRootPart.CFrame = previousCFrame
+        WindUI:Notify({ Title = "Auto Get Gun", Content = "Successfully picked up the dropped gun!", Duration = 3, Icon = "check" })
+    end
+end
+
+-- ==================== NO CLIP & CLIENT INVISIBLE ====================
+local function updateNoClip(state)
+    if not Character then return end
+    for _, part in ipairs(Character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = not state
+        end
+    end
+end
+
+local function updateInvisible(state)
+    if not Character then return end
+    for _, part in ipairs(Character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Transparency = state and 1 or 0
+        end
+    end
+    for _, obj in ipairs(Character:GetChildren()) do
+        if obj:IsA("Accessory") then
+            for _, part in ipairs(obj:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.Transparency = state and 1 or 0
+                end
+            end
+        end
+    end
+    if Humanoid then
+        for _, child in ipairs(Humanoid:GetChildren()) do
+            if child:IsA("Sound") then
+                child.Volume = state and 0 or 1
+            end
+        end
+    end
+end
+
+Plr.CharacterAdded:Connect(function(newChar)
+    Character = newChar
+    HumanoidRootPart = newChar:WaitForChild("HumanoidRootPart")
+    Humanoid = newChar:WaitForChild("Humanoid")
+    if noclipEnabled then updateNoClip(true) end
+    if invisibleEnabled then updateInvisible(true) end
+    if antiFlingEnabled then startAntiFling(true) end
+    newChar.DescendantAdded:Connect(function(child)
+        if noclipEnabled and child:IsA("BasePart") then
+            child.CanCollide = false
+        end
+        if invisibleEnabled and child:IsA("BasePart") then
+            child.Transparency = 1
+        end
+    end)
+end)
+
+-- ==================== ANTI FLING ====================
+local antiFlingConnection
+local function startAntiFling(state)
+    if state then
+        if antiFlingConnection then antiFlingConnection:Disconnect() end
+        antiFlingConnection = RunService.RenderStepped:Connect(function()
+            if not Character or not HumanoidRootPart then return end
+            local vel = HumanoidRootPart.Velocity
+            if vel.Magnitude > 100 then
+                HumanoidRootPart.Velocity = Vector3.zero
+            end
+        end)
+    else
+        if antiFlingConnection then
+            antiFlingConnection:Disconnect()
+            antiFlingConnection = nil
+        end
+    end
+end
+
+-- ==================== AIMBOT (CAMERA LOCK) ====================
+RunService.RenderStepped:Connect(function()
+    if aimbotEnabled then
+        local murd = findMurderer()
+        if murd and murd.Character and murd.Character:FindFirstChild("Head") then
+            local camera = workspace.CurrentCamera
+            local headPos = murd.Character.Head.Position
+            camera.CFrame = CFrame.lookAt(camera.CFrame.Position, headPos)
+        end
+    end
+end)
+
+-- ==================== PURPLE THEMES ====================
+
+WindUI:AddTheme({
+    Name = "Purple Neon",
+    Accent = Color3.fromHex("#c026d3"),      -- Vibrant Purple
+    Dialog = Color3.fromHex("#1a0033"),
+    Outline = Color3.fromHex("#e879f9"),
+    Text = Color3.fromHex("#f3e8ff"),
+    Placeholder = Color3.fromHex("#d8b4fe"),
+    Background = Color3.fromHex("#0c001f"),
+    Button = Color3.fromHex("#3b0764"),
+    Icon = Color3.fromHex("#e879f9"),
+})
+
+WindUI:AddTheme({
+    Name = "Cyber Purple",
+    Accent = Color3.fromHex("#a855f7"),
+    Dialog = Color3.fromHex("#1f0a33"),
+    Outline = Color3.fromHex("#c084fc"),
+    Text = Color3.fromHex("#f3e8ff"),
+    Placeholder = Color3.fromHex("#c4b5fd"),
+    Background = Color3.fromHex("#0f051a"),
+    Button = Color3.fromHex("#4c1d95"),
+    Icon = Color3.fromHex("#d946ef"),
+})
+
+WindUI:AddTheme({
+    Name = "Magenta Neon",
+    Accent = Color3.fromHex("#ff00ff"),
+    Dialog = Color3.fromHex("#140022"),
+    Outline = Color3.fromHex("#ff77ff"),
+    Text = Color3.fromHex("#ffffff"),
+    Placeholder = Color3.fromHex("#ff99ff"),
+    Background = Color3.fromHex("#0a0014"),
+    Button = Color3.fromHex("#4a007a"),
+    Icon = Color3.fromHex("#ff00ff"),
+})
+
+WindUI:AddTheme({ Name = "Halloween", Accent = Color3.fromHex("#271700"), Dialog = Color3.fromHex("#3f2400"), Outline = Color3.fromHex("#FFFFFF"), Text = Color3.fromHex("#FFFFFF"), Placeholder = Color3.fromHex("#7a7a7a"), Background = Color3.fromHex("#3f2400"), Button = Color3.fromHex("#52525b"), Icon = Color3.fromHex("#ff9100") })
+WindUI:AddTheme({ Name = "Crimson", Accent = Color3.fromHex("#271700"), Dialog = Color3.fromHex("#2b0000"), Outline = Color3.fromHex("#FFFFFF"), Text = Color3.fromHex("#FFFFFF"), Placeholder = Color3.fromHex("#7a7a7a"), Background = Color3.fromHex("#2b0000"), Button = Color3.fromHex("#52525b"), Icon = Color3.fromHex("#b82500") })
+WindUI:AddTheme({ Name = "Ocean", Accent = Color3.fromHex("#271700"), Dialog = Color3.fromHex("#002c41"), Outline = Color3.fromHex("#FFFFFF"), Text = Color3.fromHex("#FFFFFF"), Placeholder = Color3.fromHex("#7a7a7a"), Background = Color3.fromHex("#002c41"), Button = Color3.fromHex("#52525b"), Icon = Color3.fromHex("#0077ff") })
+WindUI:AddTheme({ Name = "Dark", Accent = Color3.fromHex("#18181b"), Dialog = Color3.fromHex("#161616"), Outline = Color3.fromHex("#FFFFFF"), Text = Color3.fromHex("#FFFFFF"), Placeholder = Color3.fromHex("#7a7a7a"), Background = Color3.fromHex("#101010"), Button = Color3.fromHex("#52525b"), Icon = Color3.fromHex("#a1a1aa") })
+
+local Window = WindUI:CreateWindow({
+    Title = "Zuri Hub",
+    Icon = "zap",
+    Author = "YT: ZuriScripts",
+    Folder = "ToolScriptsHub",
+    Size = UDim2.fromOffset(580, 460),
+    MinSize = Vector2.new(560, 350),
+    MaxSize = Vector2.new(850, 560),
+    Transparent = true,
+    Theme = "Purple Neon",
+    Resizable = false,
+    SideBarWidth = 200,
+    BackgroundImageTransparency = 0.42,
+    HideSearchBar = false,
+    ScrollBarEnabled = true,
+    User = { Enabled = true, Anonymous = false, Callback = function() end },
+})
+
+Window:EditOpenButton({
+    Title = "Zuri Hub",
+    Icon = "crown",
+    CornerRadius = UDim.new(0, 16),
+    StrokeThickness = 2,
+    Color = ColorSequence.new(Color3.fromHex("#c026d3"), Color3.fromHex("#7b2cbf")),
+    OnlyMobile = false,
+    Enabled = true,
+    Draggable = true,
+})
+
+Window:Tag({ Title = "Beta", Color = Color3.fromHex("#a855f7"), Radius = 8 })
+WindUI:SetTheme("Purple Neon")
+Window:ToggleTransparency(true)
+
+Window:CreateTopbarButton("DarkMode", "moon", function() WindUI:SetTheme("Dark") end, 990)
+Window:CreateTopbarButton("Event", "candy", function() WindUI:SetTheme("Halloween") end, 990)
+
+-- ==================== GLOWING TITLE & TAG EFFECT ====================
+task.spawn(function()
+    local screenGui = Plr.PlayerGui:FindFirstChild("ToolScriptsHub")
+    if not screenGui then return end
+
+    local titleLabel = nil
+    for _, obj in ipairs(screenGui:GetDescendants()) do
+        if obj:IsA("TextLabel") and obj.Text == "KaiScripts Hub" then
+            titleLabel = obj
+            break
+        end
+    end
+
+    if titleLabel then
+        local shine = Instance.new("UIGradient")
+        shine.Name = "TitleShine"
+        shine.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.new(1,1,1)),
+            ColorSequenceKeypoint.new(0.3, Color3.new(1,1,1)),
+            ColorSequenceKeypoint.new(0.5, Color3.new(1,1,1)),
+            ColorSequenceKeypoint.new(0.7, Color3.new(1,1,1)),
+            ColorSequenceKeypoint.new(1, Color3.new(1,1,1))
+        })
+        shine.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 0.9),
+            NumberSequenceKeypoint.new(0.3, 0.6),
+            NumberSequenceKeypoint.new(0.5, 0),
+            NumberSequenceKeypoint.new(0.7, 0.6),
+            NumberSequenceKeypoint.new(1, 0.9)
+        })
+        shine.Rotation = 0
+        shine.Parent = titleLabel
+
+        task.spawn(function()
+            while shine.Parent == titleLabel do
+                TweenService:Create(shine, TweenInfo.new(1.5, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {
+                    Offset = Vector2.new(-1, 0)
+                }):Play()
+                task.wait(1.5)
+                shine.Offset = Vector2.new(1, 0)
+                task.wait()
+            end
+        end)
+    end
+
+    local betaTag = nil
+    for _, obj in ipairs(screenGui:GetDescendants()) do
+        if obj:IsA("Frame") then
+            for _, child in ipairs(obj:GetChildren()) do
+                if child:IsA("TextLabel") and child.Text == "Beta" then
+                    betaTag = obj
+                    break
+                end
+            end
+        end
+        if betaTag then break end
+    end
+
+    if betaTag then
+        local shine = Instance.new("UIGradient")
+        shine.Name = "BetaShine"
+        shine.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.new(1,1,1)),
+            ColorSequenceKeypoint.new(0.3, Color3.new(1,1,1)),
+            ColorSequenceKeypoint.new(0.5, Color3.new(1,1,1)),
+            ColorSequenceKeypoint.new(0.7, Color3.new(1,1,1)),
+            ColorSequenceKeypoint.new(1, Color3.new(1,1,1))
+        })
+        shine.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 0.8),
+            NumberSequenceKeypoint.new(0.3, 0.4),
+            NumberSequenceKeypoint.new(0.5, 0),
+            NumberSequenceKeypoint.new(0.7, 0.4),
+            NumberSequenceKeypoint.new(1, 0.8)
+        })
+        shine.Rotation = 0
+        shine.Parent = betaTag
+
+        task.spawn(function()
+            while shine.Parent == betaTag do
+                TweenService:Create(shine, TweenInfo.new(1.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {
+                    Offset = Vector2.new(-1, 0)
+                }):Play()
+                task.wait(1.2)
+                shine.Offset = Vector2.new(1, 0)
+                task.wait()
+            end
+        end)
+    end
+end)
+
+-- ==================== ON-SCREEN BUTTONS (with lock/unlock & transparent style) ====================
+
+-- Helper to register button for style updates
+local function registerButton(btnType, borderFrame, button, borderGradient, btnGradient, stroke)
+    activeButtons[btnType] = {
+        borderFrame = borderFrame,
+        button = button,
+        borderGradient = borderGradient,
+        btnGradient = btnGradient,
+        stroke = stroke
+    }
+    applyTransparentStyle(activeButtons[btnType])
+end
+
+-- Shoot Murderer Button
+local shootButton = nil
+local shootBorderFrame = nil
+local shootDragging = false
+local shootDragInput = nil
+local shootDragStart = nil
+local shootStartPos = nil
+
+local function createShootButton()
+    if shootButton then return end
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "EnhancedPurpleShootButton"
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.Parent = Plr:WaitForChild("PlayerGui")
+
+    local screenSize = workspace.CurrentCamera.ViewportSize
+    local isMobile = screenSize.X < 800
+    local buttonWidth = isMobile and 220 or 270
+    local buttonHeight = isMobile and 65 or 78
+    local borderThickness = 2
+
+    shootBorderFrame = Instance.new("Frame")
+    shootBorderFrame.Name = "BorderFrame"
+    shootBorderFrame.Size = UDim2.new(0, buttonWidth + borderThickness*2, 0, buttonHeight + borderThickness*2)
+    shootBorderFrame.Position = UDim2.new(0.5, -shootBorderFrame.Size.X.Offset/2, 0.62, 0)
+    shootBorderFrame.BackgroundColor3 = Color3.fromHex("#7a1fa2")
+    shootBorderFrame.BorderSizePixel = 0
+    shootBorderFrame.Parent = ScreenGui
+
+    local borderGradient = Instance.new("UIGradient")
+    borderGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromHex("#3a005c")),
+        ColorSequenceKeypoint.new(1, Color3.fromHex("#ab47bc"))
+    })
+    borderGradient.Rotation = 135
+    borderGradient.Parent = shootBorderFrame
+
+    local borderCorner = Instance.new("UICorner")
+    borderCorner.CornerRadius = UDim.new(0, 18)
+    borderCorner.Parent = shootBorderFrame
+
+    shootButton = Instance.new("TextButton")
+    shootButton.Name = "ShootMurdererBtn"
+    shootButton.Size = UDim2.new(1, -borderThickness*2, 1, -borderThickness*2)
+    shootButton.Position = UDim2.new(0, borderThickness, 0, borderThickness)
+    shootButton.BackgroundColor3 = Color3.fromHex("#2d0047")
+    shootButton.BorderSizePixel = 0
+    shootButton.Text = "SHOOT MURDERER"
+    shootButton.TextColor3 = Color3.fromHex("#f3d8ff")
+    shootButton.TextScaled = true
+    shootButton.Font = Enum.Font.GothamBold
+    shootButton.Parent = shootBorderFrame
+
+    local btnGradient = Instance.new("UIGradient")
+    btnGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromHex("#3a005c")),
+        ColorSequenceKeypoint.new(1, Color3.fromHex("#7a1fa2"))
+    })
+    btnGradient.Rotation = 135
+    btnGradient.Parent = shootButton
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 16)
+    corner.Parent = shootButton
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromHex("#c084fc")
+    stroke.Thickness = 1
+    stroke.Transparency = 0
+    stroke.Parent = shootButton
+
+    registerButton("shoot", shootBorderFrame, shootButton, borderGradient, btnGradient, stroke)
+
+    -- Drag logic (only if not locked)
+    local function updateShootInput(input)
+        if shootButtonLocked then return end
+        local delta = input.Position - shootDragStart
+        shootBorderFrame.Position = UDim2.new(
+            shootStartPos.X.Scale,
+            shootStartPos.X.Offset + delta.X,
+            shootStartPos.Y.Scale,
+            shootStartPos.Y.Offset + delta.Y
+        )
+    end
+
+    shootButton.InputBegan:Connect(function(input)
+        if shootButtonLocked then return end
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            shootDragging = true
+            shootDragStart = input.Position
+            shootStartPos = shootBorderFrame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    shootDragging = false
+                end
+            end)
+        end
+    end)
+
+    shootButton.InputChanged:Connect(function(input)
+        if shootButtonLocked then return end
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            shootDragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if shootButtonLocked then return end
+        if shootDragging and input == shootDragInput then
+            updateShootInput(input)
+        end
+    end)
+
+    -- Hover effects
+    shootButton.MouseEnter:Connect(function()
+        if not isMobile then
+            borderGradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromHex("#5b0f8c")),
+                ColorSequenceKeypoint.new(1, Color3.fromHex("#ce93d8"))
+            })
+            btnGradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromHex("#4a0072")),
+                ColorSequenceKeypoint.new(1, Color3.fromHex("#8e24aa"))
+            })
+            stroke.Color = Color3.fromHex("#e1bee7")
+        end
+    end)
+
+    shootButton.MouseLeave:Connect(function()
+        if not isMobile then
+            borderGradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromHex("#3a005c")),
+                ColorSequenceKeypoint.new(1, Color3.fromHex("#ab47bc"))
+            })
+            btnGradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromHex("#3a005c")),
+                ColorSequenceKeypoint.new(1, Color3.fromHex("#7a1fa2"))
+            })
+            stroke.Color = Color3.fromHex("#c084fc")
+        end
+    end)
+
+    -- Click action
+    shootButton.MouseButton1Click:Connect(function()
+        local murd = findMurderer()
+        if not murd then 
+            WindUI:Notify({Title = "Error", Content = "No murderer found!", Duration = 2})
+            return 
+        end
+        local gun = Plr.Character:FindFirstChild("Gun")
+        if not gun and Plr.Backpack:FindFirstChild("Gun") then
+            Plr.Character.Humanoid:EquipTool(Plr.Backpack.Gun)
+            task.wait(0.1)
+            gun = Plr.Character:FindFirstChild("Gun")
+        end
+        if gun then
+            local pos = getPredictedPosition(murd)
+            gun.Shoot:FireServer(CFrame.new(Plr.Character.RightHand.Position), CFrame.new(pos))
+            WindUI:Notify({Title = "Error", Content = "No gun equipped!", Duration = 2})
+        end
+    end)
+end
+
+local function removeShootButton()
+    if shootBorderFrame then
+        shootBorderFrame:Destroy()
+        shootBorderFrame = nil
+        shootButton = nil
+        activeButtons.shoot = { borderFrame = nil, button = nil, borderGradient = nil, btnGradient = nil, stroke = nil }
+    end
+end
+
+-- Knife Throw Button (with lock)
+local knifeThrowButton = nil
+local knifeBorderFrame = nil
+local knifeDragging = false
+local knifeDragInput = nil
+local knifeDragStart = nil
+local knifeStartPos = nil
+
+local function createKnifeThrowButton()
+    if knifeThrowButton then return end
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "KnifeThrowButton"
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.Parent = Plr:WaitForChild("PlayerGui")
+
+    local screenSize = workspace.CurrentCamera.ViewportSize
+    local isMobile = screenSize.X < 800
+    local buttonWidth = isMobile and 220 or 270
+    local buttonHeight = isMobile and 65 or 78
+    local borderThickness = 2
+
+    knifeBorderFrame = Instance.new("Frame")
+    knifeBorderFrame.Name = "BorderFrame"
+    knifeBorderFrame.Size = UDim2.new(0, buttonWidth + borderThickness*2, 0, buttonHeight + borderThickness*2)
+    knifeBorderFrame.Position = UDim2.new(0.5, -knifeBorderFrame.Size.X.Offset/2, 0.5, 0)
+    knifeBorderFrame.BackgroundColor3 = Color3.fromHex("#7a1fa2")
+    knifeBorderFrame.BorderSizePixel = 0
+    knifeBorderFrame.Parent = ScreenGui
+
+    local borderGradient = Instance.new("UIGradient")
+    borderGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromHex("#3a005c")),
+        ColorSequenceKeypoint.new(1, Color3.fromHex("#ab47bc"))
+    })
+    borderGradient.Rotation = 135
+    borderGradient.Parent = knifeBorderFrame
+
+    local borderCorner = Instance.new("UICorner")
+    borderCorner.CornerRadius = UDim.new(0, 18)
+    borderCorner.Parent = knifeBorderFrame
+
+    knifeThrowButton = Instance.new("TextButton")
+    knifeThrowButton.Name = "ThrowKnifeBtn"
+    knifeThrowButton.Size = UDim2.new(1, -borderThickness*2, 1, -borderThickness*2)
+    knifeThrowButton.Position = UDim2.new(0, borderThickness, 0, borderThickness)
+    knifeThrowButton.BackgroundColor3 = Color3.fromHex("#2d0047")
+    knifeThrowButton.BorderSizePixel = 0
+    knifeThrowButton.Text = "THROW KNIFE"
+    knifeThrowButton.TextColor3 = Color3.fromHex("#f3d8ff")
+    knifeThrowButton.TextScaled = true
+    knifeThrowButton.Font = Enum.Font.GothamBold
+    knifeThrowButton.Parent = knifeBorderFrame
+
+    local btnGradient = Instance.new("UIGradient")
+    btnGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromHex("#3a005c")),
+        ColorSequenceKeypoint.new(1, Color3.fromHex("#7a1fa2"))
+    })
+    btnGradient.Rotation = 135
+    btnGradient.Parent = knifeThrowButton
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 16)
+    corner.Parent = knifeThrowButton
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromHex("#c084fc")
+    stroke.Thickness = 1
+    stroke.Transparency = 0
+    stroke.Parent = knifeThrowButton
+
+    registerButton("knife", knifeBorderFrame, knifeThrowButton, borderGradient, btnGradient, stroke)
+
+    local function updateKnifeInput(input)
+        if knifeButtonLocked then return end
+        local delta = input.Position - knifeDragStart
+        knifeBorderFrame.Position = UDim2.new(
+            knifeStartPos.X.Scale,
+            knifeStartPos.X.Offset + delta.X,
+            knifeStartPos.Y.Scale,
+            knifeStartPos.Y.Offset + delta.Y
+        )
+    end
+
+    knifeThrowButton.InputBegan:Connect(function(input)
+        if knifeButtonLocked then return end
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            knifeDragging = true
+            knifeDragStart = input.Position
+            knifeStartPos = knifeBorderFrame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    knifeDragging = false
+                end
+            end)
+        end
+    end)
+
+    knifeThrowButton.InputChanged:Connect(function(input)
+        if knifeButtonLocked then return end
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            knifeDragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if knifeButtonLocked then return end
+        if knifeDragging and input == knifeDragInput then
+            updateKnifeInput(input)
+        end
+    end)
+
+    knifeThrowButton.MouseEnter:Connect(function()
+        if not isMobile then
+            borderGradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromHex("#5b0f8c")),
+                ColorSequenceKeypoint.new(1, Color3.fromHex("#ce93d8"))
+            })
+            btnGradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromHex("#4a0072")),
+                ColorSequenceKeypoint.new(1, Color3.fromHex("#8e24aa"))
+            })
+            stroke.Color = Color3.fromHex("#e1bee7")
+        end
+    end)
+
+    knifeThrowButton.MouseLeave:Connect(function()
+        if not isMobile then
+            borderGradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromHex("#3a005c")),
+                ColorSequenceKeypoint.new(1, Color3.fromHex("#ab47bc"))
+            })
+            btnGradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromHex("#3a005c")),
+                ColorSequenceKeypoint.new(1, Color3.fromHex("#7a1fa2"))
+            })
+            stroke.Color = Color3.fromHex("#c084fc")
+        end
+    end)
+
+    knifeThrowButton.MouseButton1Click:Connect(function()
+        if findMurderer() ~= Plr then
+            WindUI:Notify({Title = "Error", Content = "You must be the murderer to throw a knife!", Duration = 2})
+            return
+        end
+        local target = findNearestPlayer()
+        if not target then
+            WindUI:Notify({Title = "Error", Content = "No target found!", Duration = 2})
+            return
+        end
+        if throwKnifeAt(target) then
+            WindUI:Notify({Title = "Knife Thrown", Content = "Thrown at nearest player!", Duration = 1.5})
+        else
+            WindUI:Notify({Title = "Error", Content = "No knife equipped!", Duration = 2})
+        end
+    end)
+end
+
+local function removeKnifeThrowButton()
+    if knifeBorderFrame then
+        knifeBorderFrame:Destroy()
+        knifeBorderFrame = nil
+        knifeThrowButton = nil
+        activeButtons.knife = { borderFrame = nil, button = nil, borderGradient = nil, btnGradient = nil, stroke = nil }
+    end
+end
+
+-- Get Gun Button (with lock)
+local getGunButton = nil
+local getGunBorderFrame = nil
+local getGunDragging = false
+local getGunDragInput = nil
+local getGunDragStart = nil
+local getGunStartPos = nil
+
+local function createGetGunButton()
+    if getGunButton then return end
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "GetGunButton"
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.Parent = Plr:WaitForChild("PlayerGui")
+
+    local screenSize = workspace.CurrentCamera.ViewportSize
+    local isMobile = screenSize.X < 800
+    local buttonWidth = isMobile and 220 or 270
+    local buttonHeight = isMobile and 65 or 78
+    local borderThickness = 2
+
+    getGunBorderFrame = Instance.new("Frame")
+    getGunBorderFrame.Name = "BorderFrame"
+    getGunBorderFrame.Size = UDim2.new(0, buttonWidth + borderThickness*2, 0, buttonHeight + borderThickness*2)
+    getGunBorderFrame.Position = UDim2.new(0.5, -getGunBorderFrame.Size.X.Offset/2, 0.75, 0)
+    getGunBorderFrame.BackgroundColor3 = Color3.fromHex("#7a1fa2")
+    getGunBorderFrame.BorderSizePixel = 0
+    getGunBorderFrame.Parent = ScreenGui
+
+    local borderGradient = Instance.new("UIGradient")
+    borderGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromHex("#3a005c")),
+        ColorSequenceKeypoint.new(1, Color3.fromHex("#ab47bc"))
+    })
+    borderGradient.Rotation = 135
+    borderGradient.Parent = getGunBorderFrame
+
+    local borderCorner = Instance.new("UICorner")
+    borderCorner.CornerRadius = UDim.new(0, 18)
+    borderCorner.Parent = getGunBorderFrame
+
+    getGunButton = Instance.new("TextButton")
+    getGunButton.Name = "GetGunBtn"
+    getGunButton.Size = UDim2.new(1, -borderThickness*2, 1, -borderThickness*2)
+    getGunButton.Position = UDim2.new(0, borderThickness, 0, borderThickness)
+    getGunButton.BackgroundColor3 = Color3.fromHex("#2d0047")
+    getGunButton.BorderSizePixel = 0
+    getGunButton.Text = "GET GUN"
+    getGunButton.TextColor3 = Color3.fromHex("#f3d8ff")
+    getGunButton.TextScaled = true
+    getGunButton.Font = Enum.Font.GothamBold
+    getGunButton.Parent = getGunBorderFrame
+
+    local btnGradient = Instance.new("UIGradient")
+    btnGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromHex("#3a005c")),
+        ColorSequenceKeypoint.new(1, Color3.fromHex("#7a1fa2"))
+    })
+    btnGradient.Rotation = 135
+    btnGradient.Parent = getGunButton
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 16)
+    corner.Parent = getGunButton
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromHex("#c084fc")
+    stroke.Thickness = 1
+    stroke.Transparency = 0
+    stroke.Parent = getGunButton
+
+    registerButton("getGun", getGunBorderFrame, getGunButton, borderGradient, btnGradient, stroke)
+
+    local function updateGetGunInput(input)
+        if getGunButtonLocked then return end
+        local delta = input.Position - getGunDragStart
+        getGunBorderFrame.Position = UDim2.new(
+            getGunStartPos.X.Scale,
+            getGunStartPos.X.Offset + delta.X,
+            getGunStartPos.Y.Scale,
+            getGunStartPos.Y.Offset + delta.Y
+        )
+    end
+
+    getGunButton.InputBegan:Connect(function(input)
+        if getGunButtonLocked then return end
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            getGunDragging = true
+            getGunDragStart = input.Position
+            getGunStartPos = getGunBorderFrame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    getGunDragging = false
+                end
+            end)
+        end
+    end)
+
+    getGunButton.InputChanged:Connect(function(input)
+        if getGunButtonLocked then return end
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            getGunDragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if getGunButtonLocked then return end
+        if getGunDragging and input == getGunDragInput then
+            updateGetGunInput(input)
+        end
+    end)
+
+    getGunButton.MouseEnter:Connect(function()
+        if not isMobile then
+            borderGradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromHex("#5b0f8c")),
+                ColorSequenceKeypoint.new(1, Color3.fromHex("#ce93d8"))
+            })
+            btnGradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromHex("#4a0072")),
+                ColorSequenceKeypoint.new(1, Color3.fromHex("#8e24aa"))
+            })
+            stroke.Color = Color3.fromHex("#e1bee7")
+        end
+    end)
+
+    getGunButton.MouseLeave:Connect(function()
+        if not isMobile then
+            borderGradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromHex("#3a005c")),
+                ColorSequenceKeypoint.new(1, Color3.fromHex("#ab47bc"))
+            })
+            btnGradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromHex("#3a005c")),
+                ColorSequenceKeypoint.new(1, Color3.fromHex("#7a1fa2"))
+            })
+            stroke.Color = Color3.fromHex("#c084fc")
+        end
+    end)
+
+    getGunButton.MouseButton1Click:Connect(function()
+        autoGetGun()
+        WindUI:Notify({Title = "Get Gun", Content = "Attempted to pick up dropped gun.", Duration = 3})
+    end)
+end
+
+local function removeGetGunButton()
+    if getGunBorderFrame then
+        getGunBorderFrame:Destroy()
+        getGunBorderFrame = nil
+        getGunButton = nil
+        activeButtons.getGun = { borderFrame = nil, button = nil, borderGradient = nil, btnGradient = nil, stroke = nil }
+    end
+end
+
+-- ==================== GUI TABS ====================
+local MainSection = Window:Section({ Title = "Main", Icon = "monitor", Opened = false })
+local PlayerTab = MainSection:Tab({ Title = "Player", Icon = "gamepad-2", Locked = false })
+
+PlayerTab:Paragraph({
+    Title = "Zuri Hub",
+    Desc = "Best MM2 Functions! – Yt: ZuriScripts",
+})
+
+PlayerTab:Divider()
+
+PlayerTab:Slider({ Title = "Player Speed!", Step = 1, Value = { Min = 20, Max = 500, Default = 20 }, Callback = function(value) if Plr.Character and Plr.Character.Humanoid then Plr.Character.Humanoid.WalkSpeed = value end end })
+PlayerTab:Slider({ Title = "Player Jump Power!", Step = 1, Value = { Min = 50, Max = 1000, Default = 70 }, Callback = function(value) if Plr.Character and Plr.Character.Humanoid then Plr.Character.Humanoid.JumpPower = value end end })
+
+-- FOV Slider
+PlayerTab:Divider()
+PlayerTab:Slider({ Title = "Field of View (FOV)", Step = 1, Value = { Min = 70, Max = 120, Default = 70 }, Callback = function(value) fovValue = value; workspace.CurrentCamera.FieldOfView = value end })
+
+-- Teleport to Player
+PlayerTab:Divider()
+local playerNames = {}
+for _, p in ipairs(Players:GetPlayers()) do
+    if p ~= Plr then table.insert(playerNames, p.Name) end
+end
+local selectedPlayer = playerNames[1] or ""
+PlayerTab:Dropdown({
+    Title = "Select Player",
+    Values = playerNames,
+    Value = selectedPlayer,
+    Callback = function(option) selectedPlayer = option end
+})
+PlayerTab:Button({
+    Title = "Teleport to Player",
+    Desc = "Move your character next to the selected player",
+    Callback = function()
+        local target = Players:FindFirstChild(selectedPlayer)
+        if target then teleportToPlayer(target) end
+    end
+})
+
+PlayerTab:Divider()
+
+PlayerTab:Toggle({
+    Title = "NoClip",
+    Callback = function(state)
+        noclipEnabled = state
+        Config.NoClip = state
+        updateNoClip(state)
+        WindUI:Notify({ Title = "NoClip", Content = state and "Enabled" or "Disabled", Duration = 2 })
+    end,
+})
+
+PlayerTab:Toggle({
+    Title = "Ghost",
+    Desc = "(UNDER DEVELOPMENT)",
+    Callback = function(state)
+        invisibleEnabled = state
+        Config.ClientInvisible = state
+        updateInvisible(state)
+    end,
+})
+
+-- Farms Tab
+local FarmsSection = Window:Section({ Title = "Farms", Icon = "bitcoin", Opened = false })
+local FarmTab = FarmsSection:Tab({ Title = "Autofarm Settings", Icon = "settings", Locked = false })
+
+FarmTab:Paragraph({ Title = "Instructions!", Desc = "We suggest doing only 22 below" })
+FarmTab:Divider()
+
+FarmTab:Dropdown({ Title = "Farm Type", Values = { "Egg", "Coin", "Candy", "SnowToken" }, Value = "SnowToken", Callback = function(option) ToFarm = option end })
+FarmTab:Slider({ Title = "Auto Farm Speed", Step = 1, Value = { Min = 5, Max = 25, Default = 20 }, Callback = function(value) auto_farm_speed = value end })
+
+FarmTab:Toggle({
+    Title = "Enable Autofarm",
+    Default = false,
+    Callback = function(state)
+        autofarm_enabled = state
+        Config.AutoFarm = state
+        if isInitializing then return end
+        if state then
+            if inRound then farming = true end
+            WindUI:Notify({ Title = "Autofarm Enabled", Content = "Farming will start when the round begins: " .. ToFarm, Duration = 3, Icon = "check" })
+        else
+            farming = false
+            WindUI:Notify({ Title = "Autofarm Disabled", Content = "Autofarm stopped.", Duration = 3, Icon = "x" })
+        end
+    end,
+})
+
+-- Optimization Tab
+local OptSection = Window:Section({ Title = "Optimization", Icon = "hard-drive", Opened = false })
+local OptTab = OptSection:Tab({ Title = "   Optimization Mode", Icon = "turtle", Locked = false })
+
+OptTab:Paragraph({ Title = "Information!", Desc = "This mode disable shadows and lows roblox graphics." })
+OptTab:Divider()
+
+OptTab:Button({
+    Title = "Enable Low Optimization Mode",
+    Callback = function()
+        local Target = game.Workspace:GetDescendants()
+        for _, niga in ipairs(Target) do
+            if niga:IsA("BasePart") then niga.CastShadow = false end
+        end
+    end,
+})
+
+OptTab:Button({
+    Title = "Enable Ultra Low Optimization Mode",
+    Callback = function()
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.CastShadow = false
+                v.Material = Enum.Material.SmoothPlastic
+            end
+            if v:IsA("Decal") or v:IsA("Texture") then v.Transparency = 1 end
+            if v:IsA("ParticleEmitter") or v:IsA("Trail") then v.Enabled = false end
+        end
+        local Lighting = game:GetService("Lighting")
+        for _, effect in ipairs(Lighting:GetChildren()) do
+            if effect:IsA("BloomEffect") or effect:IsA("SunRaysEffect") or effect:IsA("ColorCorrectionEffect") or effect:IsA("DepthOfFieldEffect") then
+                effect.Enabled = false
+            end
+        end
+        Lighting.GlobalShadows = false
+        Lighting.FogEnd = 9e9
+        Lighting.Brightness = 1
+        Lighting.ClockTime = 14
+        pcall(function() workspace.Terrain.Decoration = false end)
+        WindUI:Notify({ Title = "Ultra Low Mode Enabled", Content = "Graphics heavily reduced for max performance.", Duration = 4, Icon = "zap" })
+    end,
+})
+
+-- ==================== ESP ====================
+local EspSection = Window:Section({ Title = "ESP", Icon = "eye", Opened = false })
+local EspTab = EspSection:Tab({ Title = "Main", Icon = "pin", Locked = false })
+
+local esp_enabled = false
+local hitbox_enabled = false
+local tracers_enabled = false
+local names_enabled = false
+local lines = {}
+local nameBillboards = {}
+
+local InnocentColor = Color3.fromRGB(0, 170, 0)
+local SheriffColor = Color3.fromRGB(0, 0, 255)
+local MurdererColor = Color3.fromRGB(255, 0, 0)
+
+local function getRoleColor(player)
+    if player.Backpack:FindFirstChild("Knife") or (player.Character and player.Character:FindFirstChild("Knife")) then
+        return MurdererColor
+    elseif player.Backpack:FindFirstChild("Gun") or (player.Character and player.Character:FindFirstChild("Gun")) then
+        return SheriffColor
+    end
+    return InnocentColor
+end
+
+local DrawingAvailable = pcall(function() return Drawing.new end)
+
+local function clearTracers()
+    if not DrawingAvailable then return end
+    for _, line in pairs(lines) do
+        if line then line:Remove() end
+    end
+    table.clear(lines)
+end
+
+local function clearNameBillboards()
+    for _, bb in pairs(nameBillboards) do
+        if bb then bb:Destroy() end
+    end
+    table.clear(nameBillboards)
+end
+
+local function UpdateVisuals()
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= Plr and player.Character then
+            local char = player.Character
+            local highlight = char:FindFirstChild("EspHighlight")
+            local color = getRoleColor(player)
+
+            if esp_enabled or hitbox_enabled then
+                if not highlight then
+                    highlight = Instance.new("Highlight")
+                    highlight.Name = "EspHighlight"
+                    highlight.Parent = char
+                end
+                highlight.FillColor = color
+                highlight.FillTransparency = esp_enabled and 0.5 or 1
+                highlight.OutlineTransparency = hitbox_enabled and 0 or 1
+                highlight.OutlineColor = Color3.fromRGB(0, 255, 0)
+            else
+                if highlight then highlight:Destroy() end
+            end
+
+            local head = char:FindFirstChild("Head")
+            if head then
+                local existing = head:FindFirstChild("NameTag")
+                if names_enabled then
+                    if not existing then
+                        local billboard = Instance.new("BillboardGui")
+                        billboard.Name = "NameTag"
+                        billboard.Size = UDim2.new(0, 200, 0, 50)
+                        billboard.StudsOffset = Vector3.new(0, 2.5, 0)
+                        billboard.AlwaysOnTop = true
+                        billboard.Parent = head
+
+                        local label = Instance.new("TextLabel")
+                        label.Size = UDim2.new(1, 0, 1, 0)
+                        label.BackgroundTransparency = 1
+                        label.Text = player.Name
+                        label.TextColor3 = color
+                        label.TextScaled = true
+                        label.Font = Enum.Font.SourceSansBold
+                        label.Parent = billboard
+
+                        nameBillboards[player] = billboard
+                    end
+                else
+                    if existing then existing:Destroy() end
+                end
+            end
+        end
+    end
+
+    clearTracers()
+    if tracers_enabled and DrawingAvailable then
+        local camera = workspace.CurrentCamera
+        local screenTopCenter = Vector2.new(camera.ViewportSize.X / 2, 0)
+
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player ~= Plr and player.Character then
+                local targetHead = player.Character:FindFirstChild("Head")
+                if targetHead then
+                    local targetScreen, onScreen = camera:WorldToScreenPoint(targetHead.Position)
+                    if onScreen then
+                        local line = Drawing.new("Line")
+                        line.From = screenTopCenter
+                        line.To = Vector2.new(targetScreen.X, targetScreen.Y)
+                        line.Color = getRoleColor(player)
+                        line.Thickness = 1.5
+                        line.Transparency = 0.5
+                        line.Visible = true
+                        table.insert(lines, line)
+                    end
+                end
+            end
+        end
+    end
+end
+
+RunService.RenderStepped:Connect(function()
+    if tracers_enabled then
+        UpdateVisuals()
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.5) do
+        if esp_enabled or hitbox_enabled or names_enabled then
+            UpdateVisuals()
+        else
+            clearTracers()
+            clearNameBillboards()
+        end
+    end
+end)
+
+EspTab:Toggle({ Title = "Enable ESP", Callback = function(state) esp_enabled = state; Config.ESP = state; UpdateVisuals() end })
+EspTab:Toggle({ Title = "Enable Hitbox", Callback = function(state) hitbox_enabled = state; Config.Hitbox = state; UpdateVisuals() end })
+EspTab:Toggle({ Title = "Enable Tracers", Callback = function(state) tracers_enabled = state; Config.Tracers = state; if not state then clearTracers() end; UpdateVisuals() end })
+EspTab:Toggle({ Title = "Show Names", Callback = function(state) names_enabled = state; Config.ShowNames = state; if not state then clearNameBillboards() end; UpdateVisuals() end })
+
+-- Murderer Tools
+local MurdererSection = Window:Section({ Title = "Murderer Tools", Icon = "axe", Opened = false })
+local MurdererTab = MurdererSection:Tab({ Title = "Murderer", Icon = "axe", Locked = false })
+
+MurdererTab:Toggle({ Title = "Auto Knife Throw", Callback = function(state) loopThrow = state; Config.AutoKnifeThrow = state end })
+
+MurdererTab:Toggle({
+    Title = "Knife Throw Button",
+    Callback = function(state)
+        Config.KnifeButton = state
+        if state then
+            createKnifeThrowButton()
+            WindUI:Notify({Title = "Knife Button", Content = "Throw Knife button enabled!", Duration = 3})
+        else
+            removeKnifeThrowButton()
+            WindUI:Notify({Title = "Knife Button", Content = "Knife button removed", Duration = 3})
+        end
+    end,
+})
+
+MurdererTab:Toggle({
+    Title = "Lock Knife Button Position",
+    Desc = "When locked, the Knife Throw button cannot be dragged",
+    Callback = function(state)
+        knifeButtonLocked = state
+        Config.KnifeButtonLocked = state
+        WindUI:Notify({ Title = "Knife Button Lock", Content = state and "Locked" or "Unlocked", Duration = 2 })
+    end,
+})
+
+MurdererTab:Button({ Title = "Hold Everyone Hostage", Callback = function()
+    if findMurderer() ~= Plr then 
+        WindUI:Notify({Title = "Error", Content = "You must be the Murderer!", Duration = 3}) return 
+    end
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= Plr and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            p.Character.HumanoidRootPart.Anchored = true
+            p.Character.HumanoidRootPart.CFrame = HumanoidRootPart.CFrame * CFrame.new(0, 0, -5)
+        end
+    end
+end })
+
+-- Sheriff Tools
+local SheriffSection = Window:Section({ Title = "Sheriff Tools", Icon = "siren", Opened = false })
+local SheriffTab = SheriffSection:Tab({ Title = "Sheriff", Icon = "siren", Locked = false })
+
+SheriffTab:Toggle({
+    Title = "Shoot Murderer Button",
+    Callback = function(state)
+        Config.ShootButton = state
+        if state then
+            createShootButton()
+            WindUI:Notify({Title = "Neon Button", Content = "Enhanced Neon Shoot Button Enabled!", Duration = 3})
+        else
+            removeShootButton()
+            WindUI:Notify({Title = "Neon Button", Content = "Shoot Button Removed", Duration = 3})
+        end
+    end,
+})
+
+SheriffTab:Toggle({
+    Title = "Lock Shoot Button Position",
+    Desc = "When locked, the Shoot button cannot be dragged",
+    Callback = function(state)
+        shootButtonLocked = state
+        Config.ShootButtonLocked = state
+        WindUI:Notify({ Title = "Shoot Button Lock", Content = state and "Locked" or "Unlocked", Duration = 2 })
+    end,
+})
+
+SheriffTab:Toggle({ Title = "Auto Shoot Murderer", Callback = function(state) autoShooting = state; Config.AutoShoot = state end })
+
+SheriffTab:Toggle({
+    Title = "Aimbot",
+    Desc = "Silent aim + camera lock on murderer",
+    Callback = function(state)
+        aimbotEnabled = state
+        Config.Aimbot = state
+        WindUI:Notify({ Title = "Aimbot", Content = state and "Enabled" or "Disabled", Duration = 2 })
+    end,
+})
+
+-- INPUT FIELDS (Number only)
+SheriffTab:Input({
+    Title = "Shoot Offset",
+    Desc = "Recommended: 2.8 (0-8)",
+    Value = tostring(shootOffset),
+    InputIcon = "target",
+    Type = "Number",
+    Placeholder = "Enter a number...",
+    Callback = function(value)
+        local num = tonumber(value)
+        if num then
+            shootOffset = math.clamp(num, 0, 8)
+            WindUI:Notify({ Title = "Shoot Offset", Content = "Set to " .. shootOffset, Duration = 1.5 })
+        else
+            WindUI:Notify({ Title = "Error", Content = "Invalid number!", Duration = 2 })
+        end
+    end,
+})
+
+SheriffTab:Input({
+    Title = "Ping Multiplier",
+    Desc = "Adjust for high ping (0.5-3)",
+    Value = tostring(offsetToPingMult),
+    InputIcon = "gauge",
+    Type = "Number",
+    Placeholder = "Enter a number...",
+    Callback = function(value)
+        local num = tonumber(value)
+        if num then
+            offsetToPingMult = math.clamp(num, 0.5, 3)
+            WindUI:Notify({ Title = "Ping Multiplier", Content = "Set to " .. offsetToPingMult, Duration = 1.5 })
+        else
+            WindUI:Notify({ Title = "Error", Content = "Invalid number!", Duration = 2 })
+        end
+    end,
+})
+
+SheriffTab:Toggle({
+    Title = "Auto Get Dropped Gun",
+    Callback = function(state)
+        autoGetDroppedGun = state
+        Config.AutoGetGun = state
+        WindUI:Notify({ Title = "Auto Get Gun", Content = state and "Enabled" or "Disabled", Duration = 3 })
+    end,
+})
+
+SheriffTab:Toggle({
+    Title = "Get Dropped Gun Button",
+    Desc = "Show draggable Get Gun button on screen",
+    Callback = function(state)
+        Config.GetGunButton = state
+        if state then
+            createGetGunButton()
+            WindUI:Notify({Title = "Get Gun Button", Content = "Get Gun button enabled!", Duration = 3})
+        else
+            removeGetGunButton()
+            WindUI:Notify({Title = "Get Gun Button", Content = "Button removed", Duration = 3})
+        end
+    end,
+})
+
+SheriffTab:Toggle({
+    Title = "Lock Get Gun Button Position",
+    Desc = "When locked, the Get Gun button cannot be dragged",
+    Callback = function(state)
+        getGunButtonLocked = state
+        Config.GetGunButtonLocked = state
+        WindUI:Notify({ Title = "Get Gun Button Lock", Content = state and "Locked" or "Unlocked", Duration = 2 })
+    end,
+})
+
+SheriffTab:Button({
+    Title = "Get Dropped Gun",
+    Callback = function()
+        autoGetGun()
+        WindUI:Notify({ Title = "Get Gun", Content = "Attempted to pick up dropped gun.", Duration = 3 })
+    end,
+})
+
+-- Troll Tools
+local TrollSection = Window:Section({ Title = "Troll", Icon = "skull", Opened = false })
+local TrollTab = TrollSection:Tab({ Title = "Troll Tools", Icon = "skull", Locked = false })
+
+TrollTab:Button({ Title = "Fling Sheriff", Callback = function()
+    local sheriff = findSheriff()
+    if sheriff then miniFling(sheriff); WindUI:Notify({Title = "Fling", Content = "Sheriff has been flung!"}) end
+end })
+
+TrollTab:Button({ Title = "Fling Murderer", Callback = function()
+    local murderer = findMurderer()
+    if murderer then miniFling(murderer); WindUI:Notify({Title = "Fling", Content = "Murderer has been flung!"}) end
+end })
+
+TrollTab:Toggle({
+    Title = "Anti Fling",
+    Desc = "Prevents you from being flung by others",
+    Callback = function(state)
+        antiFlingEnabled = state
+        Config.AntiFling = state
+        startAntiFling(state)
+        WindUI:Notify({ Title = "Anti Fling", Content = state and "Enabled" or "Disabled", Duration = 2 })
+    end,
+})
+
+-- Settings & Themes
+Window:Divider()
+
+local SettingsTab = Window:Tab({ Title = "Settings", Icon = "settings", Locked = false })
+SettingsTab:Keybind({ Title = "Keybind", Desc = "Keybind to open ui", Value = "G", Callback = function(v) Window:SetToggleKey(Enum.KeyCode[v]) end })
+
+SettingsTab:Toggle({
+    Title = "Anti AFK",
+    Desc = "Prevents being kicked for idling",
+    Default = true,
+    Callback = function(state)
+        antiAfkEnabled = state
+        Config.AntiAFK = state
+        WindUI:Notify({ Title = "Anti AFK", Content = state and "Enabled" or "Disabled", Duration = 2 })
+    end,
+})
+
+SettingsTab:Toggle({
+    Title = "Transparent Button Design",
+    Desc = "Sleek glassmorphism effect for on-screen buttons",
+    Callback = function(state)
+        transparentButtons = state
+        Config.TransparentButtons = state
+        updateAllButtonsStyle()
+        WindUI:Notify({ Title = "Button Style", Content = state and "Transparent (Glass) enabled" or "Solid style restored", Duration = 3 })
+    end,
+})
+
+-- Save / Load Config (Clipboard not supported in Xeno)
+SettingsTab:Button({
+    Title = "Save Config",
+    Desc = "Clipboard not available in this executor",
+    Callback = function()
+        WindUI:Notify({Title = "Info", Content = "Clipboard functions (getclipboard/setclipboard) are not supported in Xeno. Config saving disabled."})
+    end,
+})
+
+SettingsTab:Button({
+    Title = "Load Config",
+    Desc = "Clipboard not available in this executor",
+    Callback = function()
+        WindUI:Notify({Title = "Info", Content = "Clipboard functions are not supported in Xeno."})
+    end,
+})
+
+local ThemeTab = Window:Tab({ Title = "Themes", Icon = "paintbrush", Locked = false })
+ThemeTab:Dropdown({
+    Title = "Select Theme",
+    Desc = "Select Gui Theme",
+    Values = { "Cyber Neon", "Neon", "Halloween", "Crimson", "Ocean", "Dark" },
+    Value = "Cyber Neon",
+    Callback = function(option) WindUI:SetTheme(option) end,
+})
+
+-- Auto Loops
+task.spawn(function()
+    while task.wait(0.08) do
+        if autoShooting and findSheriff() == Plr then
+            local murd = findMurderer()
+            if murd and murd.Character then
+                local gun = Plr.Character:FindFirstChild("Gun")
+                if not gun and Plr.Backpack:FindFirstChild("Gun") then
+                    Plr.Character.Humanoid:EquipTool(Plr.Backpack.Gun)
+                    task.wait(0.1)
+                    gun = Plr.Character:FindFirstChild("Gun")
+                end
+                if gun then
+                    local pos = getPredictedPosition(murd)
+                    gun.Shoot:FireServer(CFrame.new(Plr.Character.RightHand.Position), CFrame.new(pos))
+                end
+            end
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(1.1) do
+        if loopThrow and findMurderer() == Plr then
+            local knife = Plr.Character:FindFirstChild("Knife")
+            if not knife and Plr.Backpack:FindFirstChild("Knife") then
+                Plr.Character.Humanoid:EquipTool(Plr.Backpack.Knife)
+                task.wait(0.2)
+                knife = Plr.Character:FindFirstChild("Knife")
+            end
+            local target = findNearestPlayer()
+            if target and knife then
+                local pos = getPredictedPosition(target)
+                knife.Events.KnifeThrown:FireServer(
+                    CFrame.new(Plr.Character.RightHand.Position),
+                    CFrame.new(pos)
+                )
+            end
+        end
+    end
+end)
+
+workspace.DescendantAdded:Connect(function(child)
+    if autoGetDroppedGun and child.Name == "GunDrop" then
+        task.wait(0.5)
+        autoGetGun()
+    end
+end)
+
+-- ==================== SCROLL FIX FOR SHERIFF TAB ====================
+task.spawn(function()
+    task.wait(0.5)
+    local gui = Plr.PlayerGui:FindFirstChild("ToolScriptsHub")
+    if gui then
+        local mainFrame = gui:FindFirstChild("MainFrame")
+        if mainFrame then
+            local scrollFrame = mainFrame:FindFirstChild("ScrollingFrame")
+            if scrollFrame then
+                scrollFrame.CanvasSize = UDim2.new(0, 0, 0, scrollFrame.AbsoluteWindowSize.Y * 1.3)
+            end
+        end
+    end
+end)
+
+isInitializing = false
+print("Zuri Hub Loaded")
